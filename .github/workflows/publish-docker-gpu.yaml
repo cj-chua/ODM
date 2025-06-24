@@ -36,6 +36,12 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
     - name: Build and push Docker image
       id: docker_build
       uses: docker/build-push-action@v5
@@ -44,4 +50,5 @@ jobs:
         platforms: linux/amd64
         push: true
         no-cache: true
-        tags: opendronemap/odm:gpu 
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
