@@ -5,6 +5,7 @@ import multiprocessing
 # Define some needed locations
 current_path = os.path.abspath(os.path.dirname(__file__))
 root_path, _ = os.path.split(current_path)
+runpod_volume_root = '/runpod-volume'
 
 superbuild_path = os.path.join(root_path, 'SuperBuild')
 superbuild_bin_path = os.path.join(superbuild_path, 'install', 'bin')
@@ -31,16 +32,19 @@ dem2points_path = os.path.join(superbuild_bin_path, 'dem2points')
 mvstex_path = os.path.join(superbuild_bin_path, "texrecon")
 
 # openmvs paths
-omvs_densify_path = os.path.join(superbuild_bin_path, "OpenMVS", "DensifyPointCloud")
-omvs_reconstructmesh_path = os.path.join(superbuild_bin_path, "OpenMVS", "ReconstructMesh")
+omvs_densify_path = os.path.join(
+    superbuild_bin_path, "OpenMVS", "DensifyPointCloud")
+omvs_reconstructmesh_path = os.path.join(
+    superbuild_bin_path, "OpenMVS", "ReconstructMesh")
 
 fpcfilter_path = os.path.join(superbuild_bin_path, "FPCFilter")
 
 odm_orthophoto_path = os.path.join(superbuild_bin_path, "odm_orthophoto")
-settings_path = os.path.join(root_path, 'settings.yaml')
+settings_path = os.path.join(runpod_volume_root, 'settings.yaml')
 
 # Define supported image extensions
-supported_extensions = {'.jpg','.jpeg','.png', '.tif', '.tiff', '.bmp', '.raw', '.dng', '.nef'}
+supported_extensions = {'.jpg', '.jpeg', '.png',
+                        '.tif', '.tiff', '.bmp', '.raw', '.dng', '.nef'}
 supported_video_extensions = {'.mp4', '.mov', '.lrv', '.ts'}
 
 # Define the number of cores
