@@ -3,9 +3,7 @@ name: Publish Docker GPU Images
 on:
   push:
     branches:
-    - master
-    tags:
-    - v*
+    - runpod
   workflow_dispatch:
 
 env:
