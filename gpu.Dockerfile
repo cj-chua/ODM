@@ -38,16 +38,21 @@ COPY --from=builder /code /code
 # Copy the Python libraries installed via pip from the builder
 COPY --from=builder /usr/local /usr/local
 #COPY --from=builder /usr/lib/x86_64-linux-gnu/libavcodec.so.58 /usr/lib/x86_64-linux-gnu/libavcodec.so.58
+
+COPY runpod_entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 RUN dpkg --remove cuda-compat-11-2
 RUN apt-get update -y \
- && apt-get install -y ffmpeg libtbb2
+    && apt-get install -y ffmpeg libtbb2
+
 # Install shared libraries that we depend on via APT, but *not*
 # the -dev packages to save space!
 # Also run a smoke test on ODM and OpenSfM
 RUN bash configure.sh installruntimedepsonly \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-  && bash run.sh --help \
-  && bash -c "eval $(python3 /code/opendm/context.py) && python3 -c 'from opensfm import io, pymap'"
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && bash run.sh --help \
+    && bash -c "eval $(python3 /code/opendm/context.py) && python3 -c 'from opensfm import io, pymap'"
 # Entry point
-ENTRYPOINT ["python3", "/code/run.py"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
