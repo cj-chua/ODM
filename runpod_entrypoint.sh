@@ -3,7 +3,6 @@ set -e
 
 TARGET_DIR="/runpod-volume"
 LINK_NAME="/datasets"
-DEFAULT_PROJECT_NAME="project"
 
 echo "Runpod Entrypoint: Ensuring symlink for network storage..."
 
@@ -27,5 +26,4 @@ else
 fi
 
 echo "Runpod Entrypoint: No specific command arguments provided to the container."
-echo "Defaulting to ODM processing for project: $DEFAULT_PROJECT_NAME, using --project-path $LINK_NAME."
-exec python3 /code/run.py
+exec python3 /code/run.py --project-path /datasets .
