@@ -28,6 +28,4 @@ fi
 
 echo "Runpod Entrypoint: No specific command arguments provided to the container."
 echo "Defaulting to ODM processing for project: $DEFAULT_PROJECT_NAME, using --project-path $LINK_NAME."
-# Default command when nothing is passed to the container:
-# `python3 /code/run.py --project-path /datasets runpod_default_project`
 exec python3 /code/run.py
