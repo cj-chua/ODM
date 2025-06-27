@@ -26,4 +26,4 @@ else
 fi
 
 echo "Runpod Entrypoint: No specific command arguments provided to the container."
-exec python3 /code/run.py --project-path /datasets .
+exec python3 -u rp_handler.py
