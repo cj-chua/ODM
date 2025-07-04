@@ -27,7 +27,6 @@ def odm_version():
 
 
 def handler(job):
-
     args = config.config()
 
     log.ODM_INFO('Initializing ODM %s - %s' % (odm_version(), system.now()))
