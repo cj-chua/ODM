@@ -34,8 +34,9 @@ def handler(job):
     # parse job input and update arguments
     input = job["input"]
     progressbc.set_project_name(input["name"])
-    args.project_path = os.path.join(args.project_path, input["name"])
+    args.name = os.path.join(args.project_path, input["name"])
     args.feature_type = input["feature_type"]
+    args.project_path = input["project_path"]
 
     if not io.dir_exists(args.project_path):
         log.ODM_ERROR('Directory %s does not exist.' % args.name)
