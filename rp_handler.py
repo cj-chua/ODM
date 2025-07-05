@@ -35,8 +35,13 @@ def handler(job):
     input = job["input"]
     progressbc.set_project_name(input["name"])
     args.name = os.path.join(args.project_path, input["name"])
-    args.feature_type = input["feature_type"]
-    args.project_path = input["project_path"]
+    args.feature_type = input.get("feature_type", "dspsift")
+    args.project_path = input.get("project_path", "/datasets")
+    args.end_with = input.get("end_with", "odm_postprocess")
+    args.matcher_order = input.get("matcher_order", 0)
+    args.sfm_algorithm = input.get("sfm_algorithm", "incremental")
+    args.ortophoto_resolution = input.get("ortophoto_resolution", 5)
+    args.rolling_shutter = input.get("rolling_shutter", False)
 
     if not io.dir_exists(args.project_path):
         log.ODM_ERROR('Directory %s does not exist.' % args.name)
