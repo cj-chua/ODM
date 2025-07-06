@@ -40,7 +40,7 @@ def handler(job):
     args.end_with = input.get("end_with", "odm_postprocess")
     args.matcher_order = input.get("matcher_order", 0)
     args.sfm_algorithm = input.get("sfm_algorithm", "incremental")
-    args.ortophoto_resolution = input.get("ortophoto_resolution", 5)
+    args.orthophoto_resolution = input.get("orthophoto_resolution", 5)
     args.rolling_shutter = input.get("rolling_shutter", False)
 
     if not io.dir_exists(args.project_path):
