@@ -55,9 +55,6 @@ RUN bash configure.sh installruntimedepsonly \
     && bash run.sh --help \
     && bash -c "eval $(python3 /code/opendm/context.py) && python3 -c 'from opensfm import io, pymap'"
 
-# Install Runpod dependencies if the requirements file exists
-RUN if [ -f requirements-runpod.txt ]; then \
-        pip3 install --no-cache-dir --retries 5 --timeout 60 --use-deprecated=legacy-resolver -r requirements-runpod.txt; \
-    fi
+# Note: runpod is installed at runtime in runpod_entrypoint.sh to avoid build-time git dependency
 # Entry point
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
