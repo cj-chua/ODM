@@ -26,7 +26,7 @@ else
 fi
 
 echo "Runpod Entrypoint: Installing runpod dependency..."
-pip3 install --no-cache-dir --retries 5 --timeout 60 runpod || echo "Warning: Failed to install runpod, proceeding anyway..."
+pip3 install --no-cache-dir --retries 5 --timeout 60 --use-deprecated=legacy-resolver runpod || echo "Warning: Failed to install runpod, proceeding anyway..."
 
 echo "Runpod Entrypoint: No specific command arguments provided to the container."
 exec python3 -u rp_handler.py
