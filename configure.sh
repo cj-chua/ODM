@@ -68,6 +68,9 @@ ensure_prereqs() {
         python3-setuptools
     sudo pip3 install -U pip
     sudo pip3 install -U shyaml
+
+    # Upgrade pip to latest version to avoid resolution issues
+    sudo pip3 install --upgrade pip
 }
 
 # Save all dependencies in snapcraft.yaml to maintain a single source of truth.
@@ -129,8 +132,8 @@ installreqs() {
     set -e
 
     # edt requires numpy to build
-    pip install --ignore-installed numpy==1.23.1
-    pip install --ignore-installed -r requirements.txt
+    pip install --ignore-installed --no-cache-dir --retries 5 --timeout 60 numpy==1.23.1
+    pip install --ignore-installed --no-cache-dir --retries 5 --timeout 60 --use-deprecated=legacy-resolver -r requirements.txt
     #if [ ! -z "$GPU_INSTALL" ]; then
     #fi
     set +e

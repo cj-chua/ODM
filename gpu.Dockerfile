@@ -2,8 +2,8 @@ FROM nvidia/cuda:11.2.2-devel-ubuntu20.04 AS builder
 
 # Env variables
 ENV DEBIAN_FRONTEND=noninteractive \
-    PYTHONPATH="$PYTHONPATH:/code/SuperBuild/install/lib/python3.9/dist-packages:/code/SuperBuild/install/lib/python3.8/dist-packages:/code/SuperBuild/install/bin/opensfm" \
-    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/code/SuperBuild/install/lib"
+    PYTHONPATH="/code/SuperBuild/install/lib/python3.9/dist-packages:/code/SuperBuild/install/lib/python3.8/dist-packages:/code/SuperBuild/install/bin/opensfm" \
+    LD_LIBRARY_PATH="/code/SuperBuild/install/lib"
 
 # Prepare directories
 WORKDIR /code
@@ -26,8 +26,8 @@ FROM nvidia/cuda:11.2.2-runtime-ubuntu20.04
 
 # Env variables
 ENV DEBIAN_FRONTEND=noninteractive \
-    PYTHONPATH="$PYTHONPATH:/code/SuperBuild/install/lib/python3.9/dist-packages:/code/SuperBuild/install/lib/python3.8/dist-packages:/code/SuperBuild/install/bin/opensfm" \
-    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/code/SuperBuild/install/lib" \
+    PYTHONPATH="/code/SuperBuild/install/lib/python3.9/dist-packages:/code/SuperBuild/install/lib/python3.8/dist-packages:/code/SuperBuild/install/bin/opensfm" \
+    LD_LIBRARY_PATH="/code/SuperBuild/install/lib" \
     PDAL_DRIVER_PATH="/code/SuperBuild/install/bin"
 
 WORKDIR /code
@@ -54,5 +54,10 @@ RUN bash configure.sh installruntimedepsonly \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && bash run.sh --help \
     && bash -c "eval $(python3 /code/opendm/context.py) && python3 -c 'from opensfm import io, pymap'"
+
+# Install Runpod dependencies if the requirements file exists
+RUN if [ -f requirements-runpod.txt ]; then \
+        pip3 install --no-cache-dir --retries 5 --timeout 60 --use-deprecated=legacy-resolver -r requirements-runpod.txt; \
+    fi
 # Entry point
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

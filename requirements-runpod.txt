@@ -1,0 +1,1 @@
+runpod @ git+https://github.com/sebdeveloper6952/runpod-python@main
