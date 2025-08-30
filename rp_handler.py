@@ -32,22 +32,33 @@ def handler(job):
     log.ODM_INFO('Initializing ODM %s - %s' % (odm_version(), system.now()))
 
     # parse job input and update arguments
-    input = job["input"]
-    progressbc.set_project_name(input["name"])
-    args.name = os.path.join(args.project_path, input["name"])
-    args.feature_type = input.get("feature_type", "dspsift")
-    args.project_path = input.get("project_path", "/datasets")
-    args.end_with = input.get("end_with", "odm_postprocess")
-    args.matcher_order = input.get("matcher_order", 0)
-    args.sfm_algorithm = input.get("sfm_algorithm", "incremental")
-    args.orthophoto_resolution = input.get("orthophoto_resolution", 5)
-    args.rolling_shutter = input.get("rolling_shutter", False)
+    job_input = job["input"]
 
-    if not io.dir_exists(args.project_path):
-        log.ODM_ERROR('Directory %s does not exist.' % args.name)
+    # Set project name for progress reporting
+    if "name" in job_input:
+        progressbc.set_project_name(job_input["name"])
+    else:
+        log.ODM_ERROR("Missing 'name' in job input")
         exit(1)
 
-    opts_json = os.path.join(args.project_path, "options.json")
+    # Set all provided arguments, except 'name' which we handle specially.
+    for key, value in job_input.items():
+        if key == 'name':
+            continue
+        if hasattr(args, key):
+            setattr(args, key, value)
+        else:
+            log.ODM_WARNING(f'Unrecognized argument: {key}')
+
+    # Now construct the full path for 'name'
+    args.name = os.path.join(args.project_path, job_input["name"])
+
+
+    if not io.dir_exists(args.project_path):
+        log.ODM_ERROR('Project path %s does not exist.' % args.project_path)
+        exit(1)
+
+    opts_json = os.path.join(args.name, "options.json")
     auto_rerun_stage, opts_diff = find_rerun_stage(
         opts_json, args, config.rerun_stages, config.processopts)
     if auto_rerun_stage is not None and len(auto_rerun_stage) > 0:
@@ -65,12 +76,12 @@ def handler(job):
     # If user asks to rerun everything, delete all of the existing progress directories.
     if args.rerun_all:
         log.ODM_INFO("Rerun all -- Removing old data")
-        for d in [os.path.join(args.project_path, p) for p in get_processing_results_paths()] + [
-                os.path.join(args.project_path, "odm_meshing"),
-                os.path.join(args.project_path, "opensfm"),
-                os.path.join(args.project_path, "odm_texturing_25d"),
-                os.path.join(args.project_path, "odm_filterpoints"),
-                os.path.join(args.project_path, "submodels")]:
+        for d in [os.path.join(args.name, p) for p in get_processing_results_paths()] + [
+                os.path.join(args.name, "odm_meshing"),
+                os.path.join(args.name, "opensfm"),
+                os.path.join(args.name, "odm_texturing_25d"),
+                os.path.join(args.name, "odm_filterpoints"),
+                os.path.join(args.name, "submodels")]:
             rm_r(d)
 
     app = ODMApp(args)
@@ -80,7 +91,7 @@ def handler(job):
         save_opts(opts_json, args)
 
     # Do not show ASCII art for local submodels runs
-    if retcode == 0 and not "submodels" in args.project_path:
+    if retcode == 0 and not "submodels" in args.name:
         log.ODM_INFO(
             'MMMMMMMMMMMNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNMMMMMMMMMMM')
         log.ODM_INFO(
@@ -146,7 +157,7 @@ def handler(job):
         log.ODM_INFO(
             'MMMMMMMMNdhhyhdmMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMmdhyhhmNMMMMMMMM')
         log.ODM_INFO(
-            'MMMMMMMMMMMMMMMNNNNNMMMMMMNNNNNNMMMMMMMMNNMMMMMMMNNMMMMMMMMMMMMM')
+            'MMMMMMMMMMMMMNNNNNMMMMMMNNNNNNMMMMMMMMNNMMMMMMMNNMMMMMMMMMMMMM')
         log.ODM_INFO(
             'MMMMMMMMMMMMMh/-...-+dMMMm......:+hMMMMs../MMMMMo..sMMMMMMMMMMMM')
         log.ODM_INFO(
